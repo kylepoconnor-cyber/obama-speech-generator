@@ -1,0 +1,535 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obama Speech Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .option-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .option-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        
+        .radio-group input[type="radio"] {
+            margin-right: 5px;
+        }
+        
+        .temperature-control {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .temperature-control label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .temp-hint {
+            font-size: 12px;
+            font-weight: normal;
+            color: #666;
+            font-style: italic;
+            margin-left: 10px;
+        }
+        
+        .temperature-control input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .temperature-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        
+        .temperature-control input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .temp-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #333;
+            white-space: pre-wrap;
+        }
+        
+        .result-meta {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #fee;
+            border-left: 4px solid #f44;
+            padding: 15px;
+            border-radius: 8px;
+            color: #c00;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .error.show {
+            display: block;
+        }
+        
+        .search-results {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .search-results.show {
+            display: block;
+        }
+        
+        .search-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .search-item-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .search-item-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .search-item-preview {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 Obama Speech Generator</h1>
+            <p>Generate statements in Barack Obama's speaking style</p>
+        </div>
+        
+        <div class="card">
+            <div class="input-group">
+                <label for="topic">What topic should Obama speak about?</label>
+                <input 
+                    type="text" 
+                    id="topic" 
+                    placeholder="e.g., climate change, healthcare reform, artificial intelligence..."
+                    autofocus
+                >
+            </div>
+            
+            <div class="options">
+                <div class="option-group">
+                    <label>Length</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="length" value="short"> Short
+                        </label>
+                        <label>
+                            <input type="radio" name="length" value="medium" checked> Medium
+                        </label>
+                        <label>
+                            <input type="radio" name="length" value="long"> Long
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="option-group">
+                    <label>Model</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="model" value="gpt-3.5-turbo"> GPT-3.5 (cheaper)
+                        </label>
+                        <label>
+                            <input type="radio" name="model" value="gpt-4" checked> GPT-4 (better)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="temperature-control">
+                <label for="temperature">
+                    Creativity (Temperature): <span id="temp-value">0.7</span>
+                    <span class="temp-hint">Lower = more focused, Higher = more creative</span>
+                </label>
+                <input 
+                    type="range" 
+                    id="temperature" 
+                    min="0" 
+                    max="1" 
+                    step="0.1" 
+                    value="0.7"
+                    oninput="document.getElementById('temp-value').textContent = this.value"
+                >
+                <div class="temp-labels">
+                    <span>Conservative (0.0)</span>
+                    <span>Balanced (0.5)</span>
+                    <span>Creative (1.0)</span>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-primary" onclick="generate()">Generate Statement</button>
+                <button class="btn-secondary" onclick="search()">Preview Relevant Speeches</button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generating statement...</p>
+            </div>
+            
+            <div class="error" id="error"></div>
+            
+            <div class="result" id="result">
+                <div class="result-text" id="result-text"></div>
+                <div class="result-meta" id="result-meta"></div>
+            </div>
+            
+            <div class="search-results" id="search-results"></div>
+        </div>
+    </div>
+    
+    <script>
+        async function generate() {
+            const topic = document.getElementById('topic').value.trim();
+            const length = document.querySelector('input[name="length"]:checked').value;
+            const model = document.querySelector('input[name="model"]:checked').value;
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            
+            if (!topic) {
+                showError('Please enter a topic');
+                return;
+            }
+            
+            hideAll();
+            document.getElementById('loading').classList.add('show');
+            
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ topic, length, model, temperature })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('result-text').textContent = data.text;
+                    document.getElementById('result-meta').innerHTML = 
+                        `<strong>Topic:</strong> ${data.topic} | 
+                         <strong>Length:</strong> ${data.length} | 
+                         <strong>Model:</strong> ${data.model} | 
+                         <strong>Temperature:</strong> ${data.temperature}`;
+                    document.getElementById('result').classList.add('show');
+                } else {
+                    showError(data.error || 'Generation failed');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+            }
+        }
+        
+        async function search() {
+            const topic = document.getElementById('topic').value.trim();
+            
+            if (!topic) {
+                showError('Please enter a topic');
+                return;
+            }
+            
+            hideAll();
+            document.getElementById('loading').classList.add('show');
+            
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ topic })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const resultsDiv = document.getElementById('search-results');
+                    resultsDiv.innerHTML = '<h3 style="margin-bottom: 15px;">Relevant Speeches Found:</h3>';
+                    
+                    data.results.forEach((item, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'search-item';
+                        div.innerHTML = `
+                            <div class="search-item-title">${index + 1}. ${item.title}</div>
+                            <div class="search-item-meta">${item.date} | Relevance: ${(item.score * 100).toFixed(1)}%</div>
+                            <div class="search-item-preview">${item.text.substring(0, 200)}...</div>
+                        `;
+                        resultsDiv.appendChild(div);
+                    });
+                    
+                    resultsDiv.classList.add('show');
+                } else {
+                    showError(data.error || 'Search failed');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+        
+        function hideAll() {
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('search-results').classList.remove('show');
+            document.getElementById('error').classList.remove('show');
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('topic').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generate();
+            }
+        });
+    </script>
+</body>
+</html>
