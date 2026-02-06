@@ -1,0 +1,4 @@
+flask
+pinecone
+openai
+flask-limiter
